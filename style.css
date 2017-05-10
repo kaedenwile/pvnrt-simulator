@@ -1,0 +1,319 @@
+html, body, div, span {
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+
+/* COLORS AND DESIGN */
+
+body         { background-color: #141414; }
+.green       { background-color: #95f047; }
+.yellow      { background-color: #d8e650; }
+.orange      { background-color: #fc6f27; }
+.red         { background-color: #c82620; }
+.salmon      { background-color: #fc6153; }
+.pink        { background-color: #dd0e50; }
+.purple      { background-color: #590b6e; }
+.blue        { background-color: #263eb2; }
+.sky         { background-color: #2cc7fc; }
+.weakText    { color: #4d4d4d; }
+.strongText  { color: #b3b3b3; }
+.temperature {
+    background: #180b77;/* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left, #180b77, #a9050e); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #180b77, #a9050e); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #180b77, #a9050e); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(right, #180b77, #a9050e); /* Standard syntax */
+}
+.pressure {
+    background: #0e699b;/* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left, #0e699b, #091a6b); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #0e699b, #091a6b); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #0e699b, #091a6b); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(right, #0e699b, #091a6b); /* Standard syntax */
+}
+.molarity {
+    background: #d59339;/* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left, #d59339, #fc551f); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #d59339, #fc551f); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #d59339, #fc551f); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(right, #d59339, #fc551f); /* Standard syntax */
+}
+
+@font-face {
+    font-family: "Nunito";
+    src: url("font/Nunito-Light.ttf");
+}
+
+@font-face {
+    font-family: "Nunito";
+    src: url("font/Nunito-SemiBold.ttf");
+    font-weight: bold;
+}
+
+body {
+    font-family: "Nunito", sans-serif;
+    font-weight: 200;
+}
+
+.weakText { font-size: 1vw; }
+.strongText { font-size: 2.25vw; }
+
+/* PAGE SCALING */
+
+#everything {
+    width: 100vw;
+    padding-bottom: 57vw;
+    position: relative;
+    overflow: hidden;
+}
+
+#everythingStretchyWrapper {
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+}
+
+/* HEADER */
+
+#header {
+    height: 2vw;
+    padding: 1vw 3vw 1vw 1vw;
+}
+
+#title {
+    color: #b3b3b3;
+
+    font-family: "Gill Sans", sans-serif;
+    font-weight: bold;
+    font-size: 2vw;
+
+    float: left;
+}
+
+#download {
+    color: #b3b3b3;
+
+    font-size: 1vw;
+
+    float: right;
+}
+
+/* LEFT CONTAINER */
+
+#leftContainer {
+    float: left;
+    width: 62vw;
+    padding-right: 2vw;
+}
+
+#particleBoxContainer {
+    float: right;
+}
+
+#particleBoxHeader {
+    height: 4vw;
+}
+
+#particleBoxSizeSelect {
+    float: left;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+#particleBoxSizeNumeric {
+    float: right;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+}
+
+#particleBoxSizeSelect div, #particleBoxSizeNumeric div {
+    padding: 0 5px 0 5px;
+}
+
+#particleBox {
+    border: 5px solid #333333;
+    position: relative;
+    width: 50vw;
+    height: 24vw;
+}
+
+#controlsContainer {
+    padding-top: 3vw;
+    width: 100%;
+    float: right;
+}
+
+.control {
+    position: relative;
+    height: 4vw;
+}
+
+.controlMax {
+    color: #4d4d4d;
+    font-size: 1vw;
+
+    text-align: right;
+    float: right;
+    padding-top: 0.25vw;
+    width: 10vw;
+    margin-left: 32vw;
+}
+
+.controlSliderBox {
+    position: absolute;
+    width: 40vw;
+    height: 3.25vw;
+    right: 0;
+    top: 0.375vw;
+}
+
+.controlBar {
+    background-color: white;
+    border-radius: 0.125vw;
+
+    position: absolute;
+    width: 100%;
+    height: 0.25vw;
+    top: 1.5vw;
+}
+
+.controlSlider {
+    cursor: default;
+    background-color: white;
+    border-radius: 0.375vw;
+
+    position: absolute;
+    width: 0.75vw;
+    height: 100%;
+}
+
+.controlNumeric {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    height: 3vw;
+    padding: 1vw 0 1vw 0;
+}
+
+.controlNumeric div {
+    padding: 0 5px 0 5px;
+    white-space: nowrap;
+}
+
+#particleColorButtonsContainer {
+    position: absolute;
+    width: 40vw;
+    height: 100%;
+    right: 0;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.particleColorButton {
+    border: solid 0.05vw #141414;
+    width: 1.9vw;
+    height: 1.9vw;
+    border-radius: 1vw;
+    margin: 0.25vw;
+}
+
+.particleColorButtonCore {
+    pointer-events:none;
+
+    border: solid 0.35vw #141414;
+    margin: -0.1vw;
+    width: 1.4vw;
+    height: 1.4vw;
+    border-radius: 1.225vw;
+}
+
+.particleColorButton:hover .particleColorButtonCore {
+    border: none;
+}
+
+.selected .particleColorButtonCore {
+    margin: 0.125vw;
+    border: solid 0.125vw #141414;
+    border-radius: 0.7625vw;
+}
+
+.selected:hover .particleColorButtonCore {
+    border: solid 0.125vw #141414;
+}
+
+#particleColor .weakText {
+    height: 1.5vw;
+    margin-right: 42vw;
+    margin-top: 1.35vw;
+    float: right;
+}
+
+/* RIGHT CONTAINER */
+
+#rightContainer {
+    /*background: blue;*/
+    float: right;
+    width: 30vw;
+    padding-right: 6vw;
+}
+
+#workGraph {
+    height: 18vw;
+}
+
+#velocityGraph {
+    height: 18vw;
+}
+
+#numericOutput {
+    color: #4d4d4d;
+    font-size: 1vw;
+}
+
+#numericOutput table {
+    border: none;
+    border-collapse: collapse;
+    margin: 2vw auto 0 auto;
+}
+
+#numericOutput table td {
+    width: 15vw;
+}
+
+#numericOutput table tr td:first-child {
+    text-align: right;
+    padding-right: 1vw;
+    width: 14vw;
+}
+
+#numericOutput .outputNumber {
+    color: #b3b3b3;
+    padding-right: 5px;
+}
+
+/* FOOTER */
+
+#footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    bottom: 0;
+    height: 3vw;
+    width: 100%;
+}
+
+.footerButton {
+    color: #b3b3b3;
+    font-size: 1vw;
+    margin: 2vw;
+}

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PVNRT</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div id="everything">
+    <div id="everythingStretchyWrapper">
+        <div id="header">
+            <div id="title">PVNRT</div>
+            <div id="download"><img src="img/download.png" alt=""/>Download simulator data</div>
+        </div>
+        <div id="mainContent">
+            <div id="leftContainer">
+                <div id="particleBoxContainer">
+                    <div id="particleBoxHeader">
+                        <div id="particleBoxSizeSelect">
+                            <div class="weakText">PISTON</div>
+                            <div class="strongText">STATIC</div>
+                            <div class="weakText">ELASTIC</div>
+                        </div>
+                        <div id="particleBoxSizeNumeric">
+                            <div class="weakText">70.6293 ft<sup>3</sup></div>
+                            <div class="strongText">8 m<sup>3</sup></div>
+                        </div>
+                    </div>
+                    <div id="particleBox"></div>
+                </div>
+                <div id="controlsContainer">
+                    <div id="temperatureControl" class="control">
+                        <div class="controlMax">1000 K</div>
+                        <div class="controlSliderBox">
+                            <div class="controlBar temperature"></div>
+                            <div id="tempSlider" class="controlSlider" style="left: 40%;" onmousedown="beginDragging(event, updateTemperature)"></div>
+                        </div>
+                        <div class="controlNumeric">
+                            <div id="weakTemperatureNumber" class="weakText">-39 C</div>
+                            <div id="strongTemperatureNumber" class="strongText">234 K</div>
+                        </div>
+                    </div>
+                    <div id="pressureControl" class="control">
+                        <div class="controlMax">3000 kPa</div>
+                        <div class="controlSliderBox">
+                            <div class="controlBar pressure"></div>
+                            <div id="pressureSlider" class="controlSlider" style="left: 20%;" onmousedown="beginDragging(event, updatePressure)"></div>
+                        </div>
+                        <div class="controlNumeric">
+                            <div id="weakPressureNumber" class="weakText">1.480 atm</div>
+                            <div id="strongPressureNumber" class="strongText">1500 kPa</div>
+                        </div>
+                    </div>
+                    <div id="moleControl" class="control">
+                        <div class="controlMax">30 M</div>
+                        <div class="controlSliderBox">
+                            <div class="controlBar molarity"></div>
+                            <div id="moleSlider" class="controlSlider" style="left: 60%;" onmousedown="beginDragging(event, updateMolarity)"></div>
+                        </div>
+                        <div class="controlNumeric">
+                            <div id="moleNumber" class="strongText">4 M</div>
+                        </div>
+                    </div>
+                    <div id="particleColor" class="control">
+                        <div id="particleColorButtonsContainer">
+                            <div class="particleColorButton green" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
+                            <div class="particleColorButton yellow" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
+                            <div id="initialParticleColor" class="particleColorButton orange selected" onclick="selectColor(event);">
+                                <div class="particleColorButtonCore"></div></div>
+                            <div class="particleColorButton red" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
+                            <div class="particleColorButton salmon" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
+                            <div class="particleColorButton pink" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
+                            <div class="particleColorButton purple" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
+                            <div class="particleColorButton blue" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
+                            <div class="particleColorButton sky" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
+                        </div>
+                        <div class="weakText">Particle Color</div>
+                    </div>
+                </div>
+            </div>
+            <div id="rightContainer">
+                <div id="rightContainerWrapper">
+                    <div id="workGraph"></div>
+                    <div id="velocityGraph"></div>
+                    <div id="numericOutput">
+                        <table>
+                            <tr><td>Pressure</td><td><span id="pressureOutput" class="outputNumber">1500</span>kPa</td></tr>
+                            <tr><td>Volume</td><td><span id="volumeOutput" class="outputNumber">8</span>m<sup>3</sup></td></tr>
+                            <tr><td>Number of Molecules</td><td><span id="moleOutput" class="outputNumber">4</span>moles</td></tr>
+                            <tr><td>Temperature</td><td><span id="tempOutput" class="outputNumber">234</span>K</td></tr>
+                            <tr><td>Average Particle Velocity</td><td><span id="velOutput" class="outputNumber">742</span>am/s</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            <div class="footerButton">How to Use</div>
+            <div class="footerButton">Contact</div>
+            <div class="footerButton">About</div>
+            <div class="footerButton">Donate</div>
+            <div class="footerButton">Terms of Service</div>
+            <div class="footerButton">Privacy Policy</div>
+            <div class="footerButton">Built by Kilometer Creative LLC</div>
+        </div>
+    </div>
+</div>
+<script>
+    var currentStates = {
+        P: 1500, // pressure of gas
+        V: 8, // volume of gas
+        n: 4, // moles of gas
+        T: 360.8, // temperature of gas
+        R: 8.3144598, // ideal gas constant
+        m: 1 // mass of particle
+    };
+
+    var currentColorButton = document.getElementById("initialParticleColor");
+
+    var slider;
+    var left;
+    var sliderWidth;
+    var boxWidth;
+    var updateFunction;
+    measureWidths();
+
+    window.addEventListener("resize", resize);
+    window.addEventListener("mousemove", dragSlider);
+    window.addEventListener("mouseup", endDragging);
+
+    function resize() {
+        measureWidths();
+        updatedCurrentStates();
+    }
+
+    function beginDragging(event, func) {
+        slider = event.target;
+        updateFunction = func;
+
+        left = parseFloat(getComputedStyle(slider.parentNode).left);
+    }
+
+    function dragSlider(event) {
+        if (slider != null) {
+            unfocus();
+
+            var percentage = limit((event.clientX - left) / boxWidth);
+            placeSlider(slider, percentage);
+            updateFunction(percentage);
+        }
+    }
+
+    function endDragging() {
+        slider = null;
+        unfocus();
+    }
+
+    function unfocus() {
+        if (document.selection) {
+            document.selection.empty()
+        } else {
+            window.getSelection().removeAllRanges()
+        }
+    }
+
+    function measureWidths() {
+        sliderWidth = parseFloat(getComputedStyle(document.getElementById("tempSlider")).width);
+        boxWidth = parseFloat(getComputedStyle(document.getElementById("tempSlider").parentNode).width);
+    }
+
+    function placeSlider(slider, percentage) {
+        slider.style.left = percentage*boxWidth - sliderWidth / 2  + 'px';
+    }
+
+    function limit(percentage) {
+        if (percentage < 0) {
+            percentage = 0;
+        } else if (percentage > 1) {
+            percentage = 1;
+        }
+        return percentage;
+    }
+
+    function selectColor(event) {
+        currentColorButton.classList.remove("selected");
+        currentColorButton = event.target;
+        currentColorButton.classList.add("selected");
+    }
+
+    function updateTemperature(value) {
+        currentStates.T = 1000*value;
+        currentStates.P = currentStates.n * currentStates.R * currentStates.T / currentStates.V;
+
+        updatedCurrentStates();
+    }
+
+    function updatePressure(value) {
+        currentStates.P = 3000*value;
+        currentStates.T = currentStates.P * currentStates.V / ( currentStates.n * currentStates.R ) ;
+
+        updatedCurrentStates();
+    }
+
+    function updateMolarity(value) {
+        currentStates.n = 30*value;
+        currentStates.P = currentStates.n * currentStates.R * currentStates.T / currentStates.V;
+
+        updatedCurrentStates();
+    }
+
+    function updatedCurrentStates() {
+        document.getElementById("strongTemperatureNumber").innerHTML = (currentStates.T).toFixed() +" K";
+        document.getElementById("weakTemperatureNumber").innerHTML = (currentStates.T-273).toFixed() +" C";
+        placeSlider(document.getElementById("tempSlider"), limit(currentStates.T / 1000));
+
+        document.getElementById("strongPressureNumber").innerHTML = (currentStates.P).toFixed() +" kPa";
+        document.getElementById("weakPressureNumber").innerHTML = (currentStates.P/101.325).toFixed(3) +" atm";
+        placeSlider(document.getElementById("pressureSlider"), limit(currentStates.P / 3000));
+
+        document.getElementById("moleNumber").innerHTML = (currentStates.n).toFixed(1) +" M";
+        placeSlider(document.getElementById("moleSlider"), limit(currentStates.n / 30));
+
+        document.getElementById("pressureOutput").innerHTML = (currentStates.P).toFixed();
+        document.getElementById("volumeOutput").innerHTML = (currentStates.V).toFixed();
+        document.getElementById("moleOutput").innerHTML = (currentStates.n).toFixed(1);
+        document.getElementById("tempOutput").innerHTML = (currentStates.T).toFixed();
+        document.getElementById("velOutput").innerHTML = (Math.sqrt(currentStates.m * currentStates.T * 3 * 1.38064853E-23 * 1E18)).toFixed(2);
+    }
+    updatedCurrentStates();
+</script>
+</body>
+</html>
