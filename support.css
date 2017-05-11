@@ -157,6 +157,7 @@ h2 {
     margin: 2vw;
     cursor: pointer;
     user-select: none;
+    text-decoration: none;
 }
 
 .footerButton:hover {
