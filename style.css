@@ -87,11 +87,8 @@ body {
     padding: 1vw 3vw 1vw 1vw;
 }
 
-
-
 #title {
     color: #b3b3b3;
-
     font-family: "Gill Sans", sans-serif;
     font-weight: bold;
     font-size: 2vw;
@@ -101,10 +98,14 @@ body {
 
 #download {
     color: #b3b3b3;
-
     font-size: 1vw;
 
     float: right;
+}
+
+#downloadImage {
+    height: 1vw;
+    margin: 0.5vw 0.5vw 0;
 }
 
 /* LEFT CONTAINER */
