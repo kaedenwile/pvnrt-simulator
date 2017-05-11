@@ -17,13 +17,12 @@
                 <div id="particleBoxContainer">
                     <div id="particleBoxHeader">
                         <div id="particleBoxSizeSelect">
-                            <div class="weakText">PISTON</div>
                             <div class="strongText">STATIC</div>
                             <div class="weakText">ELASTIC</div>
                         </div>
-                        <div id="particleBoxSizeNumeric">
-                            <div class="weakText">70.6293 ft<sup>3</sup></div>
-                            <div class="strongText">8 m<sup>3</sup></div>
+                        <div id="particleBoxPressureNumeric">
+                            <div id="weakPressureNumber" class="weakText">14.804 atm</div>
+                            <div id="strongPressureNumber" class="strongText">1500 Pa</div>
                         </div>
                     </div>
                     <div id="particleBox"></div>
@@ -40,15 +39,15 @@
                             <div id="strongTemperatureNumber" class="strongText">234 K</div>
                         </div>
                     </div>
-                    <div id="pressureControl" class="control">
-                        <div class="controlMax">3000 kPa</div>
+                    <div id="volumeControl" class="control">
+                        <div class="controlMax">20 m<sup>3</sup></div>
                         <div class="controlSliderBox">
-                            <div class="controlBar pressure"></div>
-                            <div id="pressureSlider" class="controlSlider" style="left: 20%;" onmousedown="beginDragging(event, updatePressure)"></div>
+                            <div class="controlBar volume"></div>
+                            <div id="volumeSlider" class="controlSlider" style="left: 20%;" onmousedown="beginDragging(event, updateVolume)"></div>
                         </div>
                         <div class="controlNumeric">
-                            <div id="weakPressureNumber" class="weakText">1.480 atm</div>
-                            <div id="strongPressureNumber" class="strongText">1500 kPa</div>
+                            <div id="weakVolumeNumber" class="weakText">17.69 ft<sup>3</sup></div>
+                            <div id="strongVolumeNumber" class="strongText">8 m<sup>3</sup></div>
                         </div>
                     </div>
                     <div id="moleControl" class="control">
@@ -172,6 +171,33 @@
         slider.style.left = percentage*boxWidth - sliderWidth / 2  + 'px';
     }
 
+    function colorsFromHex(hex) {
+        return {
+            r: parseInt(hex.substr(1, 2), 16) / 256,
+            g: parseInt(hex.substr(3, 2), 16) / 256,
+            b: parseInt(hex.substr(5, 2), 16) / 256
+        }
+    }
+
+    function colorsToHex(colors) {
+        return "#"+('00'+Math.round(colors.r*256).toString(16)).slice(-2) +
+                   ('00'+Math.round(colors.g*256).toString(16)).slice(-2) +
+                   ('00'+Math.round(colors.b*256).toString(16)).slice(-2);
+    }
+
+    function doSliderColor(slider, c1, c2, percentage) {
+        var rgb1 = colorsFromHex(c1);
+        var rgb2 = colorsFromHex(c2);
+
+        var interpolatedColors = {
+            r: rgb1.r + (rgb2.r-rgb1.r)*percentage,
+            g: rgb1.g + (rgb2.g-rgb1.g)*percentage,
+            b: rgb1.b + (rgb2.b-rgb1.b)*percentage
+        };
+        slider.style.backgroundColor = colorsToHex(interpolatedColors);
+        console.log(slider, interpolatedColors, colorsToHex(interpolatedColors));
+    }
+
     function limit(percentage) {
         if (percentage < 0) {
             percentage = 0;
@@ -189,36 +215,51 @@
 
     function updateTemperature(value) {
         currentStates.T = 1000*value;
-        currentStates.P = currentStates.n * currentStates.R * currentStates.T / currentStates.V;
+        updatePressure();
 
         updatedCurrentStates();
     }
 
-    function updatePressure(value) {
-        currentStates.P = 3000*value;
-        currentStates.T = currentStates.P * currentStates.V / ( currentStates.n * currentStates.R ) ;
+    function updateVolume(value) {
+        currentStates.V = 20*value;
+        updatePressure();
 
         updatedCurrentStates();
     }
 
     function updateMolarity(value) {
         currentStates.n = 30*value;
-        currentStates.P = currentStates.n * currentStates.R * currentStates.T / currentStates.V;
+        updatePressure();
 
         updatedCurrentStates();
+    }
+
+    function updatePressure() {
+        currentStates.P = currentStates.n * currentStates.R * currentStates.T / currentStates.V;
+        if (currentStates.n === 0 || currentStates.T === 0) {
+            currentStates.P = 0;
+        } else if (currentStates.V === 0) {
+            currentStates.P = Infinity;
+        }
     }
 
     function updatedCurrentStates() {
         document.getElementById("strongTemperatureNumber").innerHTML = (currentStates.T).toFixed() +" K";
         document.getElementById("weakTemperatureNumber").innerHTML = (currentStates.T-273).toFixed() +" C";
         placeSlider(document.getElementById("tempSlider"), limit(currentStates.T / 1000));
+        doSliderColor(document.getElementById("tempSlider"), "#180b77", "#a9050e", limit(currentStates.T / 1000));
 
-        document.getElementById("strongPressureNumber").innerHTML = (currentStates.P).toFixed() +" kPa";
-        document.getElementById("weakPressureNumber").innerHTML = (currentStates.P/101.325).toFixed(3) +" atm";
-        placeSlider(document.getElementById("pressureSlider"), limit(currentStates.P / 3000));
+        document.getElementById("strongVolumeNumber").innerHTML = (currentStates.V).toFixed() +" m<sup>3</sup>";
+        document.getElementById("weakVolumeNumber").innerHTML = (currentStates.V * 35.3147).toFixed(3) +" ft<sup>3</sup>";
+        placeSlider(document.getElementById("volumeSlider"), limit(currentStates.V / 20));
+        doSliderColor(document.getElementById("volumeSlider"), "#0e699b", "#091a6b", limit(currentStates.V / 20));
 
         document.getElementById("moleNumber").innerHTML = (currentStates.n).toFixed(1) +" M";
         placeSlider(document.getElementById("moleSlider"), limit(currentStates.n / 30));
+        doSliderColor(document.getElementById("moleSlider"), "#d59339", "#fc551f", limit(currentStates.n / 30));
+
+        document.getElementById("strongPressureNumber").innerHTML = (currentStates.P).toFixed() + " kPa";
+        document.getElementById("weakPressureNumber").innerHTML = (currentStates.P / 101325).toFixed(3) + " atm";
 
         document.getElementById("pressureOutput").innerHTML = (currentStates.P).toFixed();
         document.getElementById("volumeOutput").innerHTML = (currentStates.V).toFixed();
