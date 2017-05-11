@@ -155,4 +155,10 @@ h2 {
     color: #b3b3b3;
     font-size: 1vw;
     margin: 2vw;
-} 
+    cursor: pointer;
+    user-select: none;
+}
+
+.footerButton:hover {
+    text-decoration: underline;
+}
