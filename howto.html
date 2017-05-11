@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>How To Use</title>
+    <link rel="stylesheet" type="text/css" href="Support.css">
+</head>
+<body>
+
+<div id="everything">
+    <div id="everythingStretchyWrapper">
+        <div id="header">
+            <div id="title">PVnRT</div>
+        </div>
+        <div id="blockWrapper">
+            <div id="blockTextWrapper">
+                <h1>How To Use</h1>
+                <p>PVNRT is an ideal gas thermodynamics simulator built to demonstrate the relationship between the volume, temperature, and pressure of an ideal, compressible gas. The user inputs the value of various parameters which are visualized and outputed via graphical and numerical outputs</p>
+                <h2>Input Mechanics</h2>
+                <p>The program uses a linear equation in which all three parameters, as well as the molar quantity of gas, are input into the equation PV=nRT where R is the gas constant. Becuase the equation provides one output from four inputs, the user must lock 3 of the 4 values to choose the value to be calculated. First, enter the type of container. There are two options in the upper left, static and elastic, the active selection is enlarged. Selecting static will produce a static, unchangeable volume independent of the pressure, temperature, and number of molecules. Elastic will produce an elastic volume that shrinks or enlarges as a function of the other parameters. Use the slider to edit the volume of the container.</p>
+                <!---                <div class="imageWrapper">
+                                    <img src="img/ContainerTypes.png" alt="This is blank?" width="300" height="45">
+                                </div>
+                --->
+                <p>The values for temperature and number of molecules are input through the sliders below the container. The current temperature, pressure, and molecule count are displayed in the proper units, Kelvin, Pascals, and moles respectively. Click on the number to manually enter a value. The smaller unit to the left is an alternate unit that can be changed for convenience, simply click to bring up a list of conversions. The number on the right is the maximum slider value, click to manually enter a new maximum.</p>
+                <div class="imageWrapper">
+                    <img src="img/Slider.png" class="scalableImage" alt="Why blank?" width="70%" height="5%">
+                    <p class="caption">Use sliders to adjust various parameters.</p>
+                </div>
+                <h2>Output Mechanics</h2>
+                <p>For a given set of parameters, the resulting pressure will be outputted in the area above and to the right of the container. Similar to the inputs, the pressure is given in the standard Pascals with a conversion which can be changed. In addition, a series of values are listed on the lower right, which provide the current quantity for every input parameter and output. On the right, two graphs display useful data pertaining to the current thermodynamic state. The first graph demonstrates a pressure vs volume chart and the associated isothermal, adiabatic, isochoric, and isobaric processes possible from the current state.</p>
+                <div class="imageWrapper">
+                    <img src="img/SamplePV.png" class="scalableImage" alt="Why blank?" width="70%" height="47%">
+                    <p class="caption">Generate a comprehensive PV diagram for a given set of parameters.</p>
+                </div>
+                <p>The second chart is a histogram of a selected parameter. The user can select a single parameter and track how it changes over time. Click on the chart title to change the tracked quantity.</p>
+                <div class="imageWrapper">
+                    <img src="img/SampleHist.png" class="scalableImage" alt="Why blank?" width="70%" height="47%">
+                    <p class="caption">Track how outputs change over time with the histogram.</p>
+                </div>
+                <p>PVNRT also allows users to download the data they have generated into a variety of formats. Click on the download button in the upper right corner of the page to open download options. Formats include plain text, csv, and excel.</p>
+                <div id="donateWrapper">
+                    <h2 id="closing">Like what you see? Consider donating to keep PVNRT alive!</h2>
+                    <button id="donate">Donate</button>
+                </div>
+            </div>
+        </div>
+        <div class="footer" id="stickyfooter">
+            <div class="footerButton">How to Use</div>
+            <div class="footerButton">Contact</div>
+            <div class="footerButton">About</div>
+            <div class="footerButton">Donate</div>
+            <div class="footerButton">Terms of Service</div>
+            <div class="footerButton">Privacy Policy</div>
+            <div class="footerButton">Built by Kilometer Creative LLC</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

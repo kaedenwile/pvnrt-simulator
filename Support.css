@@ -1,0 +1,158 @@
+html, body, div, span, p, h1, h2 {
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+
+/*  COLORS and FONTS  */
+
+@font-face {
+    font-family: "Nunito";
+    src: url("font/Nunito-Light.ttf");
+}
+
+@font-face {
+    font-family: "Nunito";
+    src: url("font/Nunito-SemiBold.ttf");
+    font-weight: bold;
+}
+
+body {
+    font-family: "Nunito", sans-serif;
+    font-weight: 200;
+    background-color: #141414;
+    color: #b3b3b3;
+}
+
+p {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+h1 {
+    font-weight: 200;
+}
+
+h2 {
+    padding-top: 15px;
+    font-weight: 600;
+}
+
+.caption {
+    color: #4d4d4d;
+}
+
+
+
+/*  SCALING */
+
+#everything {
+    width: 100vw;
+    /*  padding-bottom: 100vw; */
+    position: relative;
+    overflow: visible;
+}
+
+#everythingStretchyWrapper {
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+}
+
+
+
+
+/* HEADER */
+
+#header {
+    height: 2vw;
+    padding: 1vw 3vw 1vw 1vw;
+}
+
+#title {
+    color: #d5d5d5;
+
+    font-family: "Futura", sans-serif;
+    font-weight: bold;
+    font-size: 2vw;
+
+    float: left;
+}
+
+#download {
+    color: #b3b3b3;
+
+    font-size: 1vw;
+
+    float: right;
+}
+
+
+
+/* BODY TEXT */
+
+#blockWrapper {
+    width: 100%;
+    padding-top: 50px;
+}
+
+#blockTextWrapper {
+    margin: auto;
+    width: 60%;
+    text-align: left;
+    padding-bottom: 20vw;
+}
+
+.imageWrapper {
+    width: 100%;
+    text-align: center;
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+#donateWrapper {
+    padding-top: 100px;
+    text-align: center;
+}
+
+#donate {
+    margin-top: 20px;
+    font-size: 1vw;
+    padding: 15px 30px;
+    border-radius: 10px;
+    border: none;
+    color: #b3b3b3;
+    background-color: #00689D;
+}
+
+#donate:active {
+    background-color: #015C96;
+}
+
+#donate:focus {
+    outline: none;
+}
+
+/*  FOOTER  */
+
+.footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    position: absolute;
+    bottom: 0;
+    height: 3vw;
+    width: 100%;
+}
+
+#stickyfooter {
+    position: fixed;
+    background-color: #141414;
+}
+
+.footerButton {
+    color: #b3b3b3;
+    font-size: 1vw;
+    margin: 2vw;
+} 

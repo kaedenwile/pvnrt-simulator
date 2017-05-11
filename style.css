@@ -17,7 +17,7 @@ body         { background-color: #141414; }
 .blue        { background-color: #263eb2; }
 .sky         { background-color: #2cc7fc; }
 .weakText    { color: #4d4d4d; }
-.strongText  { color: #b3b3b3; }
+.strongText, .mediumText  { color: #b3b3b3; }
 .temperature {
     background: #180b77;/* For browsers that do not support gradients */
     background: -webkit-linear-gradient(left, #180b77, #a9050e); /* For Safari 5.1 to 6.0 */
@@ -58,6 +58,11 @@ body {
 
 .weakText { font-size: 1vw; }
 .strongText { font-size: 2.25vw; }
+.mediumText {
+    font-size: 1.7vw;
+    font-weight: 400;
+}
+
 
 /* PAGE SCALING */
 
@@ -79,6 +84,8 @@ body {
     height: 2vw;
     padding: 1vw 3vw 1vw 1vw;
 }
+
+
 
 #title {
     color: #b3b3b3;
@@ -298,9 +305,23 @@ body {
     padding-right: 5px;
 }
 
+
+/* BLOCK TEXT */
+
+#bodyWrapper {
+    width: 1000px;
+    align-items: center;
+    align-content: center;
+    background-color: white;
+}
+
+#bodyTextWrapper {
+    text-align: left;
+}
+
 /* FOOTER */
 
-#footer {
+.footer {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -310,6 +331,10 @@ body {
     bottom: 0;
     height: 3vw;
     width: 100%;
+}
+
+#stickyfooter {
+    position: fixed;
 }
 
 .footerButton {
