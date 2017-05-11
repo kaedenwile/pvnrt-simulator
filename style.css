@@ -351,3 +351,8 @@ body {
 .footerButton:hover {
     text-decoration: underline;
 }
+
+.activeButton {
+    cursor: default;
+    text-decoration: underline;
+}

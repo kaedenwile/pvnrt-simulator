@@ -162,3 +162,8 @@ h2 {
 .footerButton:hover {
     text-decoration: underline;
 }
+
+.activeButton {
+    cursor: default;
+    text-decoration: underline;
+}
