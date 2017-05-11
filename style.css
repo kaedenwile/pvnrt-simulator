@@ -59,6 +59,8 @@ body {
 .weakText { font-size: 1vw; }
 .strongText { font-size: 2.25vw; }
 
+.hidden { display: none; }
+
 /* PAGE SCALING */
 
 #everything {

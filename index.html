@@ -25,7 +25,8 @@
                             <div id="strongPressureNumber" class="strongText">1500 Pa</div>
                         </div>
                     </div>
-                    <div id="particleBox"></div>
+                    <canvas id="particleBox"></canvas>
+                    <img id="particleImg" class="hidden" src="img/particle.png"/>
                 </div>
                 <div id="controlsContainer">
                     <div id="temperatureControl" class="control">
@@ -87,7 +88,7 @@
                             <tr><td>Volume</td><td><span id="volumeOutput" class="outputNumber">8</span>m<sup>3</sup></td></tr>
                             <tr><td>Number of Molecules</td><td><span id="moleOutput" class="outputNumber">4</span>moles</td></tr>
                             <tr><td>Temperature</td><td><span id="tempOutput" class="outputNumber">234</span>K</td></tr>
-                            <tr><td>Average Particle Velocity</td><td><span id="velOutput" class="outputNumber">742</span>am/s</td></tr>
+                            <tr><td>Average Particle Velocity</td><td><span id="velOutput" class="outputNumber">742</span>nm/s</td></tr>
                         </table>
                     </div>
                 </div>
@@ -111,15 +112,19 @@
         n: 4, // moles of gas
         T: 360.8, // temperature of gas
         R: 8.3144598, // ideal gas constant
-        m: 1 // mass of particle
+        m: 32 // mass of particle in amu
     };
 
     var currentColorButton = document.getElementById("initialParticleColor");
 
     var slider;
-    var left;
-    var sliderWidth;
-    var boxWidth;
+    var pageDimensions = {
+        left: 0,
+        sliderWidth: 0,
+        boxWidth: 0,
+        canvasWidth: 0,
+        canvasHeight: 0
+    };
     var updateFunction;
     measureWidths();
 
@@ -135,15 +140,13 @@
     function beginDragging(event, func) {
         slider = event.target;
         updateFunction = func;
-
-        left = parseFloat(getComputedStyle(slider.parentNode).left);
     }
 
     function dragSlider(event) {
         if (slider != null) {
             unfocus();
 
-            var percentage = limit((event.clientX - left) / boxWidth);
+            var percentage = limit((event.clientX - pageDimensions.left) / pageDimensions.boxWidth);
             placeSlider(slider, percentage);
             updateFunction(percentage);
         }
@@ -163,12 +166,17 @@
     }
 
     function measureWidths() {
-        sliderWidth = parseFloat(getComputedStyle(document.getElementById("tempSlider")).width);
-        boxWidth = parseFloat(getComputedStyle(document.getElementById("tempSlider").parentNode).width);
+        var slider = document.getElementById("tempSlider");
+        pageDimensions.left = parseFloat(getComputedStyle(slider.parentNode).left);
+        pageDimensions.sliderWidth = parseFloat(getComputedStyle(slider).width);
+        pageDimensions.boxWidth = parseFloat(getComputedStyle(slider.parentNode).width);
+        var pbox = document.getElementById("particleBox");
+        pageDimensions.canvasWidth = parseFloat(getComputedStyle(pbox).width);
+        pageDimensions.canvasHeight = parseFloat(getComputedStyle(pbox).height);
     }
 
     function placeSlider(slider, percentage) {
-        slider.style.left = percentage*boxWidth - sliderWidth / 2  + 'px';
+        slider.style.left = percentage*pageDimensions.boxWidth - pageDimensions.sliderWidth / 2  + 'px';
     }
 
     function colorsFromHex(hex) {
@@ -189,13 +197,11 @@
         var rgb1 = colorsFromHex(c1);
         var rgb2 = colorsFromHex(c2);
 
-        var interpolatedColors = {
+        slider.style.backgroundColor = colorsToHex({
             r: rgb1.r + (rgb2.r-rgb1.r)*percentage,
             g: rgb1.g + (rgb2.g-rgb1.g)*percentage,
             b: rgb1.b + (rgb2.b-rgb1.b)*percentage
-        };
-        slider.style.backgroundColor = colorsToHex(interpolatedColors);
-        console.log(slider, interpolatedColors, colorsToHex(interpolatedColors));
+        });
     }
 
     function limit(percentage) {
@@ -265,9 +271,26 @@
         document.getElementById("volumeOutput").innerHTML = (currentStates.V).toFixed();
         document.getElementById("moleOutput").innerHTML = (currentStates.n).toFixed(1);
         document.getElementById("tempOutput").innerHTML = (currentStates.T).toFixed();
-        document.getElementById("velOutput").innerHTML = (Math.sqrt(currentStates.m * currentStates.T * 3 * 1.38064853E-23 * 1E18)).toFixed(2);
+        document.getElementById("velOutput").innerHTML = (Math.sqrt(currentStates.T * 3 * 1.38064853E-23 / (currentStates.m * 1E-10) *
+            1E9 /* nm */)).toFixed(2);
     }
     updatedCurrentStates();
+
+    var gasParticles = [[0.1,0.1], [0.2,0.2], [0.3,0.3], [0.4,0.4], [0.5, 0.5], [0.6, 0.6]];
+    function drawGas() {
+        var canvas = document.getElementById("particleBox");
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#141414";
+        ctx.fillRect(0, 0, pageDimensions.canvasWidth, pageDimensions.canvasHeight);
+
+        var particleImage = document.getElementById("particleImg");
+        var radius = 10;
+        for (var i = 0; i < gasParticles.length; i++) {
+            var particle = gasParticles[i];
+            ctx.drawImage(particleImage, particle[0] * pageDimensions.canvasWidth - radius, particle[1] * pageDimensions.canvasHeight - radius, radius*2, radius*2);
+        }
+    }
+    drawGas();
 </script>
 </body>
 </html>
