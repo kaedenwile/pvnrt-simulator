@@ -26,6 +26,7 @@
                         </div>
                     </div>
                     <canvas id="particleBox"></canvas>
+                    <img id="originalParticleImg" class="hidden" src="img/particle.png"/>
                     <img id="particleImg" class="hidden" src="img/particle.png"/>
                 </div>
                 <div id="controlsContainer">
@@ -217,6 +218,45 @@
         currentColorButton.classList.remove("selected");
         currentColorButton = event.target;
         currentColorButton.classList.add("selected");
+
+        var colorString = getComputedStyle(currentColorButton).backgroundColor.toString();
+        var colorParts = colorString.substr(4, colorString.length - 5).split(",");
+        var color = {r: parseInt(colorParts[0]), g: parseInt(colorParts[1]), b: parseInt(colorParts[2])}
+        colorizeParticle(color);
+    }
+    selectColor({target: document.getElementsByClassName("selected")[0]});
+
+    function colorizeParticle(color) {
+        // Thanks to: http://stackoverflow.com/questions/1445862/possible-to-use-html-images-like-canvas-with-getimagedata-putimagedata
+        var particleImageElement = document.getElementById("particleImg");
+
+        var myImgElement = document.getElementById('originalParticleImg');
+        var w = myImgElement.width, h=myImgElement.height;
+
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext("2d");
+
+        // 2) Copy your image data into the canvas
+        ctx.drawImage( myImgElement, 0, 0 );
+
+        // 3) Read your image data
+        var imgdata = ctx.getImageData(0,0,w,h);
+        var rgba = imgdata.data;
+
+        // 4) Read or manipulate the rgba as you wish
+        for (var px=0,ct=w*h*4;px<ct;px+=4){
+            rgba[px  ] = color.r;
+            rgba[px+1] = color.g;
+            rgba[px+2] = color.b;
+        }
+
+        // 5) Update the context with newly-modified data
+        ctx.putImageData(imgdata,0,0);
+
+        // 6) Draw the image data elsewhere, if you wish
+        particleImageElement.src = canvas.toDataURL("image/png");
     }
 
     function updateTemperature(value) {
@@ -276,10 +316,6 @@
             1E9 /* nm */)).toFixed(2);
     }
     updatedCurrentStates();
-
-    function colorizeParticle(color) {
-
-    }
 
     var gasParticles = [];
     function editGasAmount() {
