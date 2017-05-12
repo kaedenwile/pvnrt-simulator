@@ -64,6 +64,7 @@
                     </div>
                     <div id="particleColor" class="control">
                         <div id="particleColorButtonsContainer">
+                            <div class="particleColorButton white" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
                             <div class="particleColorButton green" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
                             <div class="particleColorButton yellow" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
                             <div id="initialParticleColor" class="particleColorButton orange selected" onclick="selectColor(event);">
@@ -133,19 +134,30 @@
     window.addEventListener("mousemove", dragSlider);
     window.addEventListener("mouseup", endDragging);
 
+//    var tSlider = document.getElementsByClassName("controlSlider")[0];
+//    tSlider.addEventListener("touchstart", function() { touch = true; beginDragging(event, updateTemperature); });
+//    tSlider.addEventListener("touchmove", dragSlider);
+//    tSlider.addEventListener("touchend", endDragging);
+//    console.log("v3");
+
     function resize() {
         measureWidths();
         updatedCurrentStates();
     }
 
     function beginDragging(event, func) {
+//        event.preventDefault();
         slider = event.target;
         updateFunction = func;
     }
 
     function dragSlider(event) {
         if (slider != null) {
+//            event.preventDefault();
             unfocus();
+
+//            console.log(touch, event);
+//            slider.style.backgroundColor = "#ffff00";
 
             var percentage = limit((event.clientX - pageDimensions.left) / pageDimensions.boxWidth);
             placeSlider(slider, percentage);
@@ -154,6 +166,7 @@
     }
 
     function endDragging() {
+        event.preventDefault();
         slider = null;
         unfocus();
     }
@@ -221,7 +234,7 @@
 
         var colorString = getComputedStyle(currentColorButton).backgroundColor.toString();
         var colorParts = colorString.substr(4, colorString.length - 5).split(",");
-        var color = {r: parseInt(colorParts[0]), g: parseInt(colorParts[1]), b: parseInt(colorParts[2])}
+        var color = {r: parseInt(colorParts[0]), g: parseInt(colorParts[1]), b: parseInt(colorParts[2])};
         colorizeParticle(color);
     }
     selectColor({target: document.getElementsByClassName("selected")[0]});
@@ -347,7 +360,8 @@
     function animateGas() {
         var now = new Date().getTime();
         var dt = (now - lastTime) / 1000; // seconds
-        var m = currentStates.T / 1000; // movement speed, depends on temperature
+        var m = currentStates.T / (100 * currentStates.V); // movement speed, depends on temperature and box volume
+        if ( m > 10 ) { m = 10; } // cap movement speed at a reasonable amount
         for (var i = 0; i < gasParticles.length; i++) {
             var p = gasParticles[i]; // this particle
 
@@ -374,7 +388,7 @@
                 n[1] = 2 - n[1];
             }
 
-            gasParticles[i] = [n[0], n[1]] // set particle
+            gasParticles[i] = [limit(n[0]), limit(n[1])] // set particle
         }
         lastTime = now;
     }
