@@ -82,9 +82,43 @@
             </div>
             <div id="rightContainer">
                 <div id="rightContainerWrapper">
-                    <div id="workGraph">
-                        
-                        <img class="graphBG" src="img/chartBG.png"/>
+                    <div id="workGraph" class="graph">
+                        <div class="graphTitle">Pressure vs. Volume</div>
+                        <div class="graphContent">
+                            <img class="graphBG" src="img/chartBG.png"/>
+                            <div class="graphFGWrapper">
+                                <svg id="workGraphSVG" class="graphFG" width="240" height="133" viewBox="0 0 240 133" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Points -->
+                                    <circle id="thePoint" cx="120" cy="67" r="4" fill="red"></circle>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="graphXAxisLabelContainer">
+                            <div class="graphXAxisLabel">10</div>
+                            <div class="graphXAxisLabel">20</div>
+                            <div class="graphXAxisLabel">30</div>
+                            <div class="graphXAxisLabel">40</div>
+                            <div class="graphXAxisLabel">50</div>
+                            <div class="graphXAxisLabel">60</div>
+                            <div class="graphXAxisLabel">70</div>
+                            <div class="graphXAxisLabel">80</div>
+                            <div class="graphXAxisLabel">90</div>
+                            <div class="graphXAxisLabel">100</div>
+                        </div>
+                        <div class="graphXAxisTitle">10<sup>5</sup> Pa</div>
+                        <div class="graphYAxisLabelContainer">
+                            <div class="graphYAxisLabel">2</div>
+                            <div class="graphYAxisLabel">4</div>
+                            <div class="graphYAxisLabel">6</div>
+                            <div class="graphYAxisLabel">8</div>
+                            <div class="graphYAxisLabel">10</div>
+                            <div class="graphYAxisLabel">12</div>
+                            <div class="graphYAxisLabel">14</div>
+                            <div class="graphYAxisLabel">16</div>
+                            <div class="graphYAxisLabel">18</div>
+                            <div class="graphYAxisLabel">20</div>
+                        </div>
+                        <div class="graphYAxisTitle">m<sup>3</sup></div>
                     </div>
                     <div id="velocityGraph"></div>
                     <div id="numericOutput">
@@ -330,6 +364,12 @@
         document.getElementById("tempOutput").innerHTML = (currentStates.T).toFixed();
         document.getElementById("velOutput").innerHTML = (Math.sqrt(currentStates.T * 3 * 1.38064853E-23 / (currentStates.m * 1E-10) *
             1E9 /* nm */)).toFixed(2);
+
+        // Chart
+        var circle = document.getElementById("thePoint");
+        circle.setAttribute("cx", (currentStates.V / 22) * 240 );
+        circle.setAttribute("cy", currentStates.P > 1E7 ? -5 : (1 - currentStates.P / 10000) * 133);
+        circle.setAttribute("fill", document.getElementById("tempSlider").style.backgroundColor);
     }
     updatedCurrentStates();
 
@@ -380,15 +420,19 @@
             var n = [p[0] + (Math.random()*2-1)*m*dt, p[1] + (Math.random()*2-1)*m*dt]; // new Position
 
             // bound particle to box, keep from congregating in corners
-            if (n[0] < 0) {
-                n[0] = -n[0]
-            } else if (n[0] > 1) {
-                n[0] = 2 - n[0];
+            while (n[0] < 0 || n[0] > 1 ) {
+                if (n[0] < 0) {
+                    n[0] = -n[0]
+                } else if (n[0] > 1) {
+                    n[0] = 2 - n[0];
+                }
             }
-            if (n[1] < 0) {
-                n[1] = -n[1]
-            } else if (n[1] > 1) {
-                n[1] = 2 - n[1];
+            while (n[1] < 0 || n[1] > 1 ) {
+                if (n[1] < 0) {
+                    n[1] = -n[1]
+                } else if (n[1] > 1) {
+                    n[1] = 2 - n[1];
+                }
             }
 
             gasParticles[i] = [limit(n[0]), limit(n[1])] // set particle
