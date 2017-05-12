@@ -7,6 +7,7 @@ html, body, div, span {
 /* COLORS AND DESIGN */
 
 body         { background-color: #141414; }
+.white       { background-color: #ffffff; }
 .green       { background-color: #95f047; }
 .yellow      { background-color: #d8e650; }
 .orange      { background-color: #fc6f27; }
@@ -346,6 +347,7 @@ body {
     margin: 2vw;
     cursor: pointer;
     user-select: none;
+    text-decoration: none;
 }
 
 .footerButton:hover {

@@ -26,6 +26,7 @@
                         </div>
                     </div>
                     <canvas id="particleBox"></canvas>
+                    <img id="originalParticleImg" class="hidden" src="img/particle.png"/>
                     <img id="particleImg" class="hidden" src="img/particle.png"/>
                 </div>
                 <div id="controlsContainer">
@@ -63,6 +64,7 @@
                     </div>
                     <div id="particleColor" class="control">
                         <div id="particleColorButtonsContainer">
+                            <div class="particleColorButton white" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
                             <div class="particleColorButton green" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
                             <div class="particleColorButton yellow" onclick="selectColor(event);"><div class="particleColorButtonCore"></div></div>
                             <div id="initialParticleColor" class="particleColorButton orange selected" onclick="selectColor(event);">
@@ -95,13 +97,13 @@
             </div>
         </div>
         <div id="footer">
-            <div class="footerButton activeButton">Simulator</div>
-            <div class="footerButton" onclick="location.href='howto.html';">How to Use</div>
-            <div class="footerButton">Contact</div>
-            <div class="footerButton" onclick="location.href='About.html';">About</div>
-            <div class="footerButton">Donate</div>
-            <div class="footerButton">Get Corkboard</div>
-            <div class="footerButton">Built by Kilometer Creative LLC</div>
+            <a class="footerButton activeButton">Simulator</a>
+            <a class="footerButton" href="howto.html">How to Use</a>
+            <a class="footerButton" href="contact.html">Contact</a>
+            <a class="footerButton" href="about.html">About</a>
+            <a class="footerButton" href="donate.html">Donate</a>
+            <a class="footerButton" href="http://corkboardhub.com">Get Corkboard</a>
+            <a class="footerButton" href="http://kilometercreative.com">Built by Kilometer Creative LLC</a>
         </div>
     </div>
 </div>
@@ -132,19 +134,30 @@
     window.addEventListener("mousemove", dragSlider);
     window.addEventListener("mouseup", endDragging);
 
+//    var tSlider = document.getElementsByClassName("controlSlider")[0];
+//    tSlider.addEventListener("touchstart", function() { touch = true; beginDragging(event, updateTemperature); });
+//    tSlider.addEventListener("touchmove", dragSlider);
+//    tSlider.addEventListener("touchend", endDragging);
+//    console.log("v3");
+
     function resize() {
         measureWidths();
         updatedCurrentStates();
     }
 
     function beginDragging(event, func) {
+//        event.preventDefault();
         slider = event.target;
         updateFunction = func;
     }
 
     function dragSlider(event) {
         if (slider != null) {
+//            event.preventDefault();
             unfocus();
+
+//            console.log(touch, event);
+//            slider.style.backgroundColor = "#ffff00";
 
             var percentage = limit((event.clientX - pageDimensions.left) / pageDimensions.boxWidth);
             placeSlider(slider, percentage);
@@ -153,6 +166,7 @@
     }
 
     function endDragging() {
+        event.preventDefault();
         slider = null;
         unfocus();
     }
@@ -217,6 +231,45 @@
         currentColorButton.classList.remove("selected");
         currentColorButton = event.target;
         currentColorButton.classList.add("selected");
+
+        var colorString = getComputedStyle(currentColorButton).backgroundColor.toString();
+        var colorParts = colorString.substr(4, colorString.length - 5).split(",");
+        var color = {r: parseInt(colorParts[0]), g: parseInt(colorParts[1]), b: parseInt(colorParts[2])};
+        colorizeParticle(color);
+    }
+    selectColor({target: document.getElementsByClassName("selected")[0]});
+
+    function colorizeParticle(color) {
+        // Thanks to: http://stackoverflow.com/questions/1445862/possible-to-use-html-images-like-canvas-with-getimagedata-putimagedata
+        var particleImageElement = document.getElementById("particleImg");
+
+        var myImgElement = document.getElementById('originalParticleImg');
+        var w = myImgElement.width, h=myImgElement.height;
+
+        var canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext("2d");
+
+        // 2) Copy your image data into the canvas
+        ctx.drawImage( myImgElement, 0, 0 );
+
+        // 3) Read your image data
+        var imgdata = ctx.getImageData(0,0,w,h);
+        var rgba = imgdata.data;
+
+        // 4) Read or manipulate the rgba as you wish
+        for (var px=0,ct=w*h*4;px<ct;px+=4){
+            rgba[px  ] = color.r;
+            rgba[px+1] = color.g;
+            rgba[px+2] = color.b;
+        }
+
+        // 5) Update the context with newly-modified data
+        ctx.putImageData(imgdata,0,0);
+
+        // 6) Draw the image data elsewhere, if you wish
+        particleImageElement.src = canvas.toDataURL("image/png");
     }
 
     function updateTemperature(value) {
@@ -277,10 +330,6 @@
     }
     updatedCurrentStates();
 
-    function colorizeParticle(color) {
-
-    }
-
     var gasParticles = [];
     function editGasAmount() {
         var gasCount = Math.round(currentStates.n * 10);
@@ -311,7 +360,8 @@
     function animateGas() {
         var now = new Date().getTime();
         var dt = (now - lastTime) / 1000; // seconds
-        var m = currentStates.T / 1000; // movement speed, depends on temperature
+        var m = currentStates.T / (100 * currentStates.V); // movement speed, depends on temperature and box volume
+        if ( m > 10 ) { m = 10; } // cap movement speed at a reasonable amount
         for (var i = 0; i < gasParticles.length; i++) {
             var p = gasParticles[i]; // this particle
 
@@ -338,7 +388,7 @@
                 n[1] = 2 - n[1];
             }
 
-            gasParticles[i] = [n[0], n[1]] // set particle
+            gasParticles[i] = [limit(n[0]), limit(n[1])] // set particle
         }
         lastTime = now;
     }

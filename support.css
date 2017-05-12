@@ -210,6 +210,7 @@ textarea:focus, input:focus {
     margin: 2vw;
     cursor: pointer;
     user-select: none;
+    text-decoration: none;
 }
 
 .footerButton:hover {
