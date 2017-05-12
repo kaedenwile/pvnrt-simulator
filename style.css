@@ -277,10 +277,17 @@ body {
 
 #workGraph {
     height: 18vw;
+    width: 26vw;
+    /*overflow: hidden;*/
+    background: gold;
 }
 
 #velocityGraph {
     height: 18vw;
+}
+
+.graphBG {
+    width: 100%;
 }
 
 #numericOutput {
