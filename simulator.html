@@ -53,10 +53,10 @@
                         </div>
                     </div>
                     <div id="moleControl" class="control">
-                        <div class="controlMax">30 M</div>
+                        <div class="controlMax">30 mol</div>
                         <div class="controlSliderBox">
-                            <div class="controlBar molarity"></div>
-                            <div id="moleSlider" class="controlSlider" style="left: 60%;" onmousedown="beginDragging(event, updateMolarity)"></div>
+                            <div class="controlBar moles"></div>
+                            <div id="moleSlider" class="controlSlider" style="left: 60%;" onmousedown="beginDragging(event, updateMoles)"></div>
                         </div>
                         <div class="controlNumeric">
                             <div id="moleNumber" class="strongText">4 mol</div>
@@ -168,35 +168,41 @@
     measureWidths();
 
     window.addEventListener("resize", resize);
+    window.addEventListener("scroll", resize);
     window.addEventListener("mousemove", dragSlider);
     window.addEventListener("mouseup", endDragging);
 
-//    var tSlider = document.getElementsByClassName("controlSlider")[0];
-//    tSlider.addEventListener("touchstart", function() { touch = true; beginDragging(event, updateTemperature); });
-//    tSlider.addEventListener("touchmove", dragSlider);
-//    tSlider.addEventListener("touchend", endDragging);
-//    console.log("v3");
+    var tSliders = document.getElementsByClassName("controlSlider");
+    var tSliderFunctions = [updateTemperature, updateVolume, updateMoles];
+    for (var i = 0; i < tSliders.length; i++) {
+        var tSlider = tSliders[i];
+        const func = tSliderFunctions[i];
+        tSlider.addEventListener("touchstart", function() {beginDragging(event, func); });
+        tSlider.addEventListener("touchmove", dragSlider);
+        tSlider.addEventListener("touchend", endDragging);
+    }
 
     function resize() {
+        console.log("RESIZE");
         measureWidths();
         updatedCurrentStates();
     }
 
     function beginDragging(event, func) {
-//        event.preventDefault();
+        event.preventDefault();
         slider = event.target;
         updateFunction = func;
     }
 
     function dragSlider(event) {
         if (slider != null) {
-//            event.preventDefault();
+            event.preventDefault();
             unfocus();
 
 //            console.log(touch, event);
 //            slider.style.backgroundColor = "#ffff00";
 
-            var percentage = limit((event.clientX - pageDimensions.left) / pageDimensions.boxWidth);
+            var percentage = limit(((event.touches ? event.touches[0].clientX : event.clientX) - pageDimensions.left) / pageDimensions.boxWidth);
             placeSlider(slider, percentage);
             updateFunction(percentage);
         }
@@ -218,7 +224,7 @@
 
     function measureWidths() {
         var slider = document.getElementById("tempSlider");
-        pageDimensions.left = parseFloat(getComputedStyle(slider.parentNode).left);
+        pageDimensions.left = window.innerWidth * 0.22;
         pageDimensions.sliderWidth = parseFloat(getComputedStyle(slider).width);
         pageDimensions.boxWidth = parseFloat(getComputedStyle(slider.parentNode).width);
         var pbox = document.getElementById("particleBox");
@@ -323,7 +329,7 @@
         updatedCurrentStates();
     }
 
-    function updateMolarity(value) {
+    function updateMoles(value) {
         currentStates.n = 30*value;
         editGasAmount();
         updatePressure();
@@ -351,7 +357,7 @@
         placeSlider(document.getElementById("volumeSlider"), limit(currentStates.V / 20));
         doSliderColor(document.getElementById("volumeSlider"), "#0e699b", "#091a6b", limit(currentStates.V / 20));
 
-        document.getElementById("moleNumber").innerHTML = (currentStates.n).toFixed(1) +" M";
+        document.getElementById("moleNumber").innerHTML = (currentStates.n).toFixed(1) +" mol";
         placeSlider(document.getElementById("moleSlider"), limit(currentStates.n / 30));
         doSliderColor(document.getElementById("moleSlider"), "#d59339", "#fc551f", limit(currentStates.n / 30));
 
