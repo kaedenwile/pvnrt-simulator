@@ -20,11 +20,11 @@ body         { background-color: #141414; }
 .weakText    { color: #4d4d4d; }
 .strongText, .mediumText  { color: #b3b3b3; }
 .temperature {
-    background: #180b77;/* For browsers that do not support gradients */
-    background: -webkit-linear-gradient(left, #180b77, #a9050e); /* For Safari 5.1 to 6.0 */
-    background: -o-linear-gradient(right, #180b77, #a9050e); /* For Opera 11.1 to 12.0 */
-    background: -moz-linear-gradient(right, #180b77, #a9050e); /* For Firefox 3.6 to 15 */
-    background: linear-gradient(right, #180b77, #a9050e); /* Standard syntax */
+    background: #37a0fc;/* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(left, #37a0fc, #a9050e); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(right, #37a0fc, #a9050e); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(right, #37a0fc, #a9050e); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(right, #37a0fc, #a9050e); /* Standard syntax */
 }
 .volume {
     background: #0e699b;/* For browsers that do not support gradients */
@@ -283,12 +283,12 @@ body {
     padding-right: 6vw;
 }
 
-#workGraph {
+#PVDiagram {
     /*overflow: hidden;*/
 }
 
-#velocityGraph {
-    height: 18vw;
+#workGraph {
+    /*height: 18vw;*/
 }
 
 .graph {
@@ -329,9 +329,30 @@ body {
 
 .graphTitle {
     float: right;
-    width: 24vw;
+    width: 14vw;
     height: 1.5vw;
     font-size: 1vw;
+}
+
+.graphReset {
+    color: #4d4d4d;
+    cursor: pointer;
+
+    float: right;
+    font-size: 1vw;
+    width: 5vw;
+    text-align: center;
+}
+
+.graphReset:hover {
+    text-decoration: underline;
+}
+
+.graphNumber {
+    float: right;
+    font-size: 1vw;
+    width: 5vw;
+    text-align: right;
 }
 
 .graphXAxisTitle {
