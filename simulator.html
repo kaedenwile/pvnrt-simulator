@@ -17,8 +17,8 @@
                 <div id="particleBoxContainer">
                     <div id="particleBoxHeader">
                         <div id="particleBoxSizeSelect">
-                            <div class="strongText">STATIC</div>
-                            <div class="weakText">ELASTIC</div>
+                            <div id="staticSizeButton" class="strongText particleBoxSizeButton" onclick="setBoxStatic(true)">STATIC</div>
+                            <div id="elasticSizeButton" class="weakText particleBoxSizeButton" onclick="setBoxStatic(false)">ELASTIC</div>
                         </div>
                         <div id="particleBoxPressureNumeric">
                             <div id="weakPressureNumber" class="weakText">14.804 atm</div>
@@ -94,16 +94,16 @@
                             </div>
                         </div>
                         <div class="graphXAxisLabelContainer">
-                            <div class="graphXAxisLabel">10</div>
-                            <div class="graphXAxisLabel">20</div>
-                            <div class="graphXAxisLabel">30</div>
-                            <div class="graphXAxisLabel">40</div>
+                            <div class="graphXAxisLabel">25</div>
                             <div class="graphXAxisLabel">50</div>
-                            <div class="graphXAxisLabel">60</div>
-                            <div class="graphXAxisLabel">70</div>
-                            <div class="graphXAxisLabel">80</div>
-                            <div class="graphXAxisLabel">90</div>
+                            <div class="graphXAxisLabel">75</div>
                             <div class="graphXAxisLabel">100</div>
+                            <div class="graphXAxisLabel">125</div>
+                            <div class="graphXAxisLabel">150</div>
+                            <div class="graphXAxisLabel">175</div>
+                            <div class="graphXAxisLabel">200</div>
+                            <div class="graphXAxisLabel">225</div>
+                            <div class="graphXAxisLabel">250</div>
                         </div>
                         <div class="graphXAxisTitle">10<sup>5</sup> Pa</div>
                         <div class="graphYAxisLabelContainer">
@@ -165,6 +165,7 @@
         canvasHeight: 0
     };
     var updateFunction;
+    var staticBox = true;
     measureWidths();
 
     window.addEventListener("resize", resize);
@@ -212,6 +213,40 @@
         event.preventDefault();
         slider = null;
         unfocus();
+    }
+
+    function setBoxStatic(isStatic) {
+        if (isStatic == staticBox) return;
+
+        var staticButton = document.getElementById("staticSizeButton");
+        var elasticButton = document.getElementById("elasticSizeButton");
+        if (isStatic) {
+            staticBox = true;
+
+            staticButton.classList.remove("weakText");
+            staticButton.classList.add("strongText");
+            elasticButton.classList.remove("strongText");
+            elasticButton.classList.add("weakText");
+
+            updateVolume(7/19);
+            document.getElementById("weakVolumeNumber").innerHTML = "";
+            document.getElementById("strongVolumeNumber").innerHTML = "Volume";
+            document.getElementById("volumeSlider").onmousedown = function() { beginDragging(event, updateVolume); };
+            setTimeout(function() { updatedCurrentStates(); }, 2000);
+        } else {
+            staticBox = false;
+
+            elasticButton.classList.remove("weakText");
+            elasticButton.classList.add("strongText");
+            staticButton.classList.remove("strongText");
+            staticButton.classList.add("weakText");
+
+            updatePressure(.5);
+            document.getElementById("weakVolumeNumber").innerHTML = "";
+            document.getElementById("strongVolumeNumber").innerHTML = "Exterior Pressure";
+            document.getElementById("volumeSlider").onmousedown = function() { beginDragging(event, updatePressure); };
+            setTimeout(function() { updatedCurrentStates(); }, 2000);
+        }
     }
 
     function unfocus() {
@@ -316,53 +351,79 @@
     }
 
     function updateTemperature(value) {
-        currentStates.T = 1000*value;
-        updatePressure();
+        currentStates.T = 1+999*value;
+        (staticBox ? updatePressure() : updateVolume());
 
         updatedCurrentStates();
     }
 
     function updateVolume(value) {
-        currentStates.V = 20*value;
-        updatePressure();
+        if (staticBox) {
+            currentStates.V = 1+19*value;
+            updatePressure();
 
-        updatedCurrentStates();
+            updatedCurrentStates();
+        } else {
+            currentStates.V = currentStates.n * currentStates.R * currentStates.T / currentStates.P;
+            if (currentStates.n === 0 || currentStates.T === 0) {
+                currentStates.V = 0;
+            } else if (currentStates.P === 0) {
+                currentStates.V = Infinity;
+            }
+        }
     }
 
     function updateMoles(value) {
         currentStates.n = 30*value;
         editGasAmount();
-        updatePressure();
+        (staticBox ? updatePressure() : updateVolume());
 
         updatedCurrentStates();
     }
 
-    function updatePressure() {
-        currentStates.P = currentStates.n * currentStates.R * currentStates.T / currentStates.V;
-        if (currentStates.n === 0 || currentStates.T === 0) {
-            currentStates.P = 0;
-        } else if (currentStates.V === 0) {
-            currentStates.P = Infinity;
+    function updatePressure(value) {
+        if (staticBox) {
+            currentStates.P = currentStates.n * currentStates.R * currentStates.T / currentStates.V;
+            if (currentStates.n === 0 || currentStates.T === 0) {
+                currentStates.P = 0;
+            } else if (currentStates.V === 0) {
+                currentStates.P = Infinity;
+            }
+        } else {
+            currentStates.P = 1+9999*value;
+            updateVolume();
+
+            updatedCurrentStates();
         }
     }
 
     function updatedCurrentStates() {
         document.getElementById("strongTemperatureNumber").innerHTML = (currentStates.T).toFixed() +" K";
         document.getElementById("weakTemperatureNumber").innerHTML = (currentStates.T-273).toFixed() +" C";
-        placeSlider(document.getElementById("tempSlider"), limit(currentStates.T / 1000));
-        doSliderColor(document.getElementById("tempSlider"), "#180b77", "#a9050e", limit(currentStates.T / 1000));
+        placeSlider(document.getElementById("tempSlider"), limit((currentStates.T - 1)/ 999));
+        doSliderColor(document.getElementById("tempSlider"), "#180b77", "#a9050e", limit((currentStates.T - 1) / 999));
 
-        document.getElementById("strongVolumeNumber").innerHTML = (currentStates.V).toFixed() +" m<sup>3</sup>";
-        document.getElementById("weakVolumeNumber").innerHTML = (currentStates.V * 35.3147).toFixed(3) +" ft<sup>3</sup>";
-        placeSlider(document.getElementById("volumeSlider"), limit(currentStates.V / 20));
-        doSliderColor(document.getElementById("volumeSlider"), "#0e699b", "#091a6b", limit(currentStates.V / 20));
+        if (staticBox) {
+            document.getElementById("strongVolumeNumber").innerHTML = (currentStates.V).toFixed() +" m<sup>3</sup>";
+            document.getElementById("weakVolumeNumber").innerHTML = (currentStates.V * 35.3147).toFixed(3) +" ft<sup>3</sup>";
+            placeSlider(document.getElementById("volumeSlider"), limit((currentStates.V - 1) / 19));
+            doSliderColor(document.getElementById("volumeSlider"), "#0e699b", "#091a6b", limit((currentStates.V - 1)/ 19));
+
+            document.getElementById("strongPressureNumber").innerHTML = (currentStates.P).toFixed() + " kPa";
+            document.getElementById("weakPressureNumber").innerHTML = (currentStates.P / 101325).toFixed(3) + " atm";
+        } else {
+            document.getElementById("strongVolumeNumber").innerHTML = (currentStates.P).toFixed() +" kPa";
+            document.getElementById("weakVolumeNumber").innerHTML = (currentStates.P / 101325).toFixed(3) +" atm";
+            placeSlider(document.getElementById("volumeSlider"), limit((currentStates.P - 1) / 9999));
+            doSliderColor(document.getElementById("volumeSlider"), "#0e699b", "#091a6b", limit((currentStates.P - 1) / 9999));
+
+            document.getElementById("strongPressureNumber").innerHTML = (currentStates.V).toFixed() +" m<sup>3</sup>";
+            document.getElementById("weakPressureNumber").innerHTML = (currentStates.V * 35.3147).toFixed(3) +" ft<sup>3</sup>";
+        }
 
         document.getElementById("moleNumber").innerHTML = (currentStates.n).toFixed(1) +" mol";
         placeSlider(document.getElementById("moleSlider"), limit(currentStates.n / 30));
         doSliderColor(document.getElementById("moleSlider"), "#d59339", "#fc551f", limit(currentStates.n / 30));
-
-        document.getElementById("strongPressureNumber").innerHTML = (currentStates.P).toFixed() + " kPa";
-        document.getElementById("weakPressureNumber").innerHTML = (currentStates.P / 101325).toFixed(3) + " atm";
 
         document.getElementById("pressureOutput").innerHTML = (currentStates.P).toFixed();
         document.getElementById("volumeOutput").innerHTML = (currentStates.V).toFixed();
@@ -374,7 +435,7 @@
         // Chart
         var circle = document.getElementById("thePoint");
         circle.setAttribute("cx", (currentStates.V / 22) * 240 );
-        circle.setAttribute("cy", currentStates.P > 1E7 ? -5 : (1 - currentStates.P / 10000) * 133);
+        circle.setAttribute("cy", currentStates.P > 1E7 ? -5 : (1 - currentStates.P / 267500) * 133);
         circle.setAttribute("fill", document.getElementById("tempSlider").style.backgroundColor);
     }
     updatedCurrentStates();
