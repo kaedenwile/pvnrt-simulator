@@ -15,7 +15,7 @@
         <div id="blockWrapper">
             <div class="blockTextWrapper" id="centeredTextWrapper">
                 <h1>Contact</h1>
-                <p>If you have any questions regarding the PVNRT simulator, or the PVNRT suite, please do not hesitate to contact us. Simply fill out the field below and we'll be back to you in a jiff.</p>
+                <p id="contactText">If you have any questions regarding the PVNRT simulator, or the PVNRT suite, please do not hesitate to contact us. Simply fill out the fields below and we'll be back to you in a jiff.</p>
                 <div id="contactForm">
                     <form action="">
                         <div class="fieldWrapper">
@@ -24,13 +24,17 @@
                         <div class="fieldWrapper">
                             <input type="text" name="email" placeholder="Email"><br>
                         </div>
-                        <input id="submitButton" type="submit" value="Contact Us">
+                        <div class="fieldWrapper">
+                            <input type="text" name="comment" placeholder="Comment or Question"><br>
+                        </div>
+                        <input id="submitButton" type="submit" value="Submit" onclick="submitMail()">
                     </form>
                 </div>
+                <p id="thankYou"></p>
             </div>
         </div>
         <div class="footer" id="stickyfooter">
-            <div class="footerButton" onclick="location.href='index.html';">Simulator</div>
+            <div class="footerButton" onclick="location.href='simulator.html';">Simulator</div>
             <div class="footerButton" onclick="location.href='howto.html';">How to Use</div>
             <div class="footerButton activeButton">Contact</div>
             <div class="footerButton" onclick="location.href='about.html';">About</div>
@@ -40,5 +44,25 @@
         </div>
     </div>
 </div>
+
+<script>
+    function submitMail() {
+        var mailForm = document.getElementById("contactForm");
+        mailForm.parentNode.removeChild(mailForm);
+
+        var thankYouNode = document.createElement("p");
+        var thankYouText = document.createTextNode("Thank you for contacting us!");
+        thankYouNode.appendChild(thankYouText);
+        document.getElementById("thankYou").appendChild(thankYouNode);
+
+        var thankYouLink = document.createElement("a");
+        thankYouLink.href = "simulator.html";
+        var thankYouLinkText = document.createTextNode("Return to Simulator");
+        thankYouLink.appendChild(thankYouLinkText);
+        document.getElementById("thankYou").appendChild(thankYouLink);
+    }
+
+</script>
+
 </body>
 </html>
