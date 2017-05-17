@@ -124,18 +124,18 @@
                     </div>
                     <div id="workGraph" class="graph">
                         <div id="workNumber" class="graphNumber">0 kJ</div>
-                        <div class="graphReset" onclick="resetGraph('PV')">reset</div>
-                        <div class="graphTitle">Work Done</div>
+                        <div class="graphReset" onclick="resetGraph('U')">reset</div>
+                        <div class="graphTitle">Work Done by Gas</div>
                         <div class="graphContent">
-                            <img class="graphBG" src="img/chartBG.png"/>
-                            <div class="graphFGWrapper">
-                                <svg id="workGraphSVG" class="graphFG" width="240" height="133" viewBox="0 0 240 133" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-                                    <!-- Points -->
-                                    <circle id="thePoint" cx="120" cy="67" r="4" fill="red"></circle>
-                                </svg>
+                            <div id="workAxis"></div>
+                            <div id="workBarContainer">
+                                <div id="ieBar" class="workBar" style="height: 6.65vw; margin-top: 6.65vw;"></div>
+                                <div id="qBar"  class="workBar" style="height: 6.65vw;"></div>
+                                <div id="wBar"  class="workBar" style="height: 3vw; margin-top: 6.65vw;"></div>
                             </div>
                         </div>
                         <div class="graphXAxisLabelContainer">
+                            <div class="graphXAxisLabel">-10</div>
                             <div class="graphXAxisLabel">-8</div>
                             <div class="graphXAxisLabel">-6</div>
                             <div class="graphXAxisLabel">-4</div>
@@ -147,20 +147,7 @@
                             <div class="graphXAxisLabel">8</div>
                             <div class="graphXAxisLabel">10</div>
                         </div>
-                        <div class="graphXAxisTitle">J</div>
-                        <div class="graphYAxisLabelContainer">
-                            <div class="graphYAxisLabel">2</div>
-                            <div class="graphYAxisLabel">4</div>
-                            <div class="graphYAxisLabel">6</div>
-                            <div class="graphYAxisLabel">8</div>
-                            <div class="graphYAxisLabel">10</div>
-                            <div class="graphYAxisLabel">12</div>
-                            <div class="graphYAxisLabel">14</div>
-                            <div class="graphYAxisLabel">16</div>
-                            <div class="graphYAxisLabel">18</div>
-                            <div class="graphYAxisLabel">20</div>
-                        </div>
-                        <div class="graphYAxisTitle">m<sup>3</sup></div>
+                        <div class="graphXAxisTitle">10<sup>3</sup> J</div>
                     </div>
                     <div id="numericOutput">
                         <table>
@@ -191,6 +178,12 @@
         T: 360.8, // temperature of gas
         R: 8.3144598, // ideal gas constant
         m: 32 // mass of particle in amu
+    };
+    var energyLevels = {
+        P: 1500,
+        V: 8,
+        n: 4,
+        T: 360.8
     };
 
     var currentColorButton = document.getElementById("initialParticleColor");
@@ -293,6 +286,9 @@
     function resetGraph(graph) {
         if (graph == 'PV') {
             document.getElementById('PVDiagramSVG').innerHTML = "<circle id='PVPoint' cx='120' cy='67' r='4' fill='red'></circle>";
+            updatedCurrentStates();
+        } else if (graph == 'U') {
+            captureCurrentState();
             updatedCurrentStates();
         }
     }
@@ -398,6 +394,13 @@
         particleImageElement.src = canvas.toDataURL("image/png");
     }
 
+    function captureCurrentState() {
+        energyLevels.P = currentStates.P;
+        energyLevels.V = currentStates.V;
+        energyLevels.T = currentStates.T;
+        energyLevels.n = currentStates.n;
+    }
+
     function updateTemperature(value) {
         currentStates.T = 1+999*value;
         if (staticBox) {
@@ -489,7 +492,6 @@
             1E9 /* nm */)).toFixed(2);
 
         document.getElementById("PVNumber").innerHTML = (currentStates.T).toFixed() + " K";
-        document.getElementById("workNumber").innerHTML = (-currentStates.P * currentStates.V / 1000).toFixed(1) + " kJ";
 
         // Chart
         var circle = document.getElementById("PVPoint");
@@ -500,6 +502,26 @@
 
         var PVDiagram = document.getElementById("PVDiagramSVG");
         PVDiagram.innerHTML += "<circle cx='"+cx+"' cy='"+cy+"' r='1' fill='"+color+"'></circle>";
+
+
+        var workScale = 22000.0;
+        var qBar = document.getElementById("qBar"), wBar = document.getElementById("wBar"), uBar = document.getElementById("ieBar");
+        var dQ = (currentStates.T - energyLevels.T)*(currentStates.n)*(staticBox ? 3/2 : 5/2);
+        var qHeight = limit(Math.abs(dQ) / workScale)*6.65;
+        qBar.style.height = qHeight+'vw';
+        qBar.style.marginTop = (dQ > 0 ? 6.65 - qHeight : 6.65)+'vw';
+
+        var dW = (currentStates.V - energyLevels.V)*(currentStates.P);
+        var wHeight = limit(Math.abs(dW) / workScale)*6.65;
+        wBar.style.height = wHeight+'vw';
+        wBar.style.marginTop = (dW > 0 ? 6.65 - wHeight : 6.65)+'vw';
+
+        var dU = dQ + dW;
+        var uHeight = limit(Math.abs(dU) / workScale)*6.65;
+        uBar.style.height = uHeight+'vw';
+        uBar.style.marginTop = (dU > 0 ? 6.65 - uHeight : 6.65)+'vw';
+
+        document.getElementById("workNumber").innerHTML = (dU / 1000.0).toFixed(1) + " kJ";
     }
     updatedCurrentStates();
 
