@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" href="support.css">
 </head>
 <body>
-
 <div id="everything">
     <div id="everythingStretchyWrapper">
         <div id="header">
@@ -16,22 +15,22 @@
         <div id="blockWrapper">
             <div class="blockTextWrapper" id="centeredTextWrapper">
                 <h1>Contact</h1>
-                <p id="contactText">If you have any questions regarding the PVNRT simulator, or the PVNRT suite, please do not hesitate to contact us. Simply fill out the fields below and we'll be back to you in a jiff.</p>
+                <p id="contactText">If you have any questions regarding the PVnRT simulator, or the PVnRT suite, please do not hesitate to contact us. Simply fill out the fields below and we'll be back to you in a jiff.</p>
                 <div id="contactForm">
                     <form action="">
                         <div class="fieldWrapper">
-                            <input type="text" name="name" placeholder="Name"><br>
+                            <input type="text" id="contactUsNameField" placeholder="Name"><br>
                         </div>
                         <div class="fieldWrapper">
-                            <input type="text" name="email" placeholder="Email"><br>
+                            <input type="text" id="contactUsEmailField" placeholder="Email"><br>
                         </div>
                         <div class="fieldWrapper">
-                            <input type="text" name="comment" placeholder="Comment or Question"><br>
+                            <input type="text" id="contactUsContentField" placeholder="Comment or Question"><br>
                         </div>
                         <input id="submitButton" type="submit" value="Submit" onclick="submitMail()">
                     </form>
                 </div>
-                <p id="thankYou"></p>
+                <div id="thankYou"></div>
             </div>
         </div>
         <div class="footer" id="stickyfooter">
@@ -44,25 +43,49 @@
         </div>
     </div>
 </div>
-
 <script>
     function submitMail() {
+        event.preventDefault();
+
+        uploadFormData(document.getElementById("contactUsNameField").value,
+            document.getElementById("contactUsEmailField").value,
+            document.getElementById("contactUsContentField").value,
+            "pvnrt", function(responseEvent) {
+            if (responseEvent.status === 200) {
+                document.getElementById("thankYou").innerHTML = "<p>Thank you for contacting us!</p><a href='simulator.html'>Return to Simulator</a>";
+            } else {
+                document.getElementById("thankYou").innerHTML = "<p>There was some kind of error.</p><p><a href='contact.html'>Refresh the page</a> and try again.</p>";
+            }
+        });
+
         var mailForm = document.getElementById("contactForm");
         mailForm.parentNode.removeChild(mailForm);
 
-        var thankYouNode = document.createElement("p");
-        var thankYouText = document.createTextNode("Thank you for contacting us!");
-        thankYouNode.appendChild(thankYouText);
-        document.getElementById("thankYou").appendChild(thankYouNode);
-
-        var thankYouLink = document.createElement("a");
-        thankYouLink.href = "simulator.html";
-        var thankYouLinkText = document.createTextNode("Return to Simulator");
-        thankYouLink.appendChild(thankYouLinkText);
-        document.getElementById("thankYou").appendChild(thankYouLink);
+        document.getElementById("thankYou").innerHTML = "<p>Sending your message...</p>";
     }
 
-</script>
+    function uploadFormData(name, email, content, page, callback) {
+        var data = JSON.stringify({
+            "name": name,
+            "email": email,
+            "content": content,
+            "page": page
+        });
 
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+
+        xhr.addEventListener("readystatechange", function () {
+            if (this.readyState === 4) {
+                callback(this);
+            }
+        });
+
+        xhr.open("POST", "https://api.corkboardhub.com/website/contact-us");
+        xhr.setRequestHeader("content-type", "application/json");
+
+        xhr.send(data);
+    }
+</script>
 </body>
 </html>
