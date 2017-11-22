@@ -26,8 +26,8 @@
                         </div>
                     </div>
                     <canvas id="particleBox"></canvas>
-                    <img id="originalParticleImg" class="hidden" src="img/particle.png"/>
-                    <img id="particleImg" class="hidden" src="img/particle.png"/>
+                    <img id="originalParticleImg" class="hidden" src="data:image/png;base64,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"/>
+                    <img id="particleImg" class="hidden" src=""/>
                 </div>
                 <div id="controlsContainer">
                     <div id="temperatureControl" class="control">
@@ -124,7 +124,7 @@
                     </div>
                     <div id="workGraph" class="graph">
                         <div id="workNumber" class="graphNumber">0 kJ</div>
-                        <div class="graphReset" onclick="resetGraph('U')">reset</div>
+                        <div class="graphReset" onclick="resetGraph('U')">zero</div>
                         <div class="graphTitle">Work Done by Gas</div>
                         <div class="graphContent">
                             <div id="workAxis"></div>
@@ -168,11 +168,8 @@
         </div>
         <div id="footer">
             <a class="footerButton activeButton">Simulator</a>
-            <a class="footerButton" href="howto.html">How to Use</a>
+            <a class="footerButton" href="http://kilometercreative.com"><img class="kmLogo" src="img/KMLogo.png"/></a>
             <a class="footerButton" href="faq.html">FAQ</a>
-            <a class="footerButton" href="contact.html">Contact</a>
-            <a class="footerButton" href="http://corkboardhub.com">Get Corkboard</a>
-            <a class="footerButton" href="http://kilometercreative.com">Built by Kilometer Creative LLC</a>
         </div>
     </div>
 </div>
@@ -247,7 +244,8 @@
         }
     }
 
-    function endDragging() {
+    function endDragging(event) {
+        console.log("MOUSEUP");
         event.preventDefault();
         slider = null;
         unfocus();
@@ -270,7 +268,7 @@
             updateVolume(7/19);
             document.getElementById("weakVolumeNumber").innerHTML = "";
             document.getElementById("strongVolumeNumber").innerHTML = "Volume";
-            document.getElementById("volumeSlider").onmousedown = function() { beginDragging(event, updateVolume); };
+            document.getElementById("volumeSlider").onmousedown = function(event) { beginDragging(event, updateVolume); };
             setTimeout(function() { updatedCurrentStates(); }, 2000);
         } else {
             staticBox = false;
@@ -284,7 +282,7 @@
             updatePressure(.5);
             document.getElementById("weakVolumeNumber").innerHTML = "";
             document.getElementById("strongVolumeNumber").innerHTML = "Exterior Pressure";
-            document.getElementById("volumeSlider").onmousedown = function() { beginDragging(event, updatePressure); };
+            document.getElementById("volumeSlider").onmousedown = function(event) { beginDragging(event, updatePressure); };
             setTimeout(function() { updatedCurrentStates(); }, 2000);
         }
     }
